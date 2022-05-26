@@ -1,0 +1,22 @@
+{
+  "version": "1.0",
+  "defaultProvider": "cdnjs",
+  "libraries": [
+    {
+      "library": "jquery@3.6.0",
+      "destination": "wwwroot/lib/jquery/"
+    }
+  ,
+{
+  "provider": "cdnjs",
+  "library": "chosen@1.8.7",
+  "destination": "wwwroot/lib/chosen/"
+}
+,
+{
+  "provider": "cdnjs",
+  "library": "jquery@3.6.0",
+  "destination": "wwwroot/lib/jquery/"
+}
+]
+}

@@ -1,0 +1,92 @@
+﻿@model FilmsCatalog.Models.GetFilmViewModel
+@{
+    ViewData["Title"] = Model.Title;
+}
+
+<div id="openModal" class="modal fade" role="dialog">
+	<div class="modal-dialog modal-lg" role="document" style="min-width:90vw;">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h6 class="modal-title w-100"
+                id="exampleModalLabel">
+                @Model.Title
+            </h6>
+            <button type="button" class="close"
+                data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">
+                    ×
+                </span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="row justify-content-center">
+                <img src="/@Model.Poster" style="height:80vh"/>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+		
+
+<h1>@Model.Title</h1>
+<div class="row">
+    <div class="col-8">
+        
+        <div class="list-group">
+            <div class="list-group-item">
+                Год выпуска:&emsp; @Model.Year
+            </div>
+            <div class="list-group-item">
+                Страна:&emsp; @Model.Country
+            </div>
+            <div class="list-group-item">
+                <span>Жанры: </span>
+                @foreach (var genre in Model.Genres)
+                {
+                    <span>&emsp; @genre.Name</span>
+                }
+            </div>
+            <div class="list-group-item">
+                Режиссер:&emsp; @Model.Director
+            </div>
+            <div class="list-group-item">
+                Слоган:&emsp; «@Model.Slogan»
+            </div>
+            <div class="list-group-item">
+                Бюджет:&emsp; @Model.Budget $
+            </div>
+            <div class="list-group-item">
+                Сборы:&emsp; @Model.Fees $
+            </div>
+            <div class="list-group-item">
+                Возрастное ограничение:&emsp; @Model.AgeLimit лет
+            </div>
+            <div class="list-group-item">
+                Продолжительность:&emsp; @Model.Time минут(ы)
+            </div>
+            <div class="list-group-item" style="overflow-wrap: break-word;">
+                Описание:&emsp; @Model.Description
+            </div>
+        </div>
+        <div class="mt-3">
+            <a class="btn btn-outline-primary" asp-action="Index" asp-controller="Home">Назад</a>
+            @if (User.Identity.IsAuthenticated && Model.IsCreator)
+            {
+                <a class="btn btn-outline-warning" asp-action="Edit" asp-controller="Film" asp-route-id="@Model.FilmId">Редактировать</a>
+                <a class="btn btn-outline-danger" asp-action="Delete" asp-controller="Film" asp-route-id="@Model.FilmId" method="get">Удалить</a>
+            }
+        </div>
+    </div>
+    <div class="col-4">
+        @if (Model.Poster != null)
+        {
+            <a data-toggle="modal" data-target="#openModal">
+                <img class="btn" src="/@Model.Poster" alt="poster" width="450" height="650">
+            </a>
+        }
+        else
+        {
+            <div class="alert alert-info">Обложка книги не была загружена</div>
+        }
+    </div>
+</div>

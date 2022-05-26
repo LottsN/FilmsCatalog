@@ -1,0 +1,140 @@
+﻿@{
+    ViewData["Title"] = "Каталог фильмов";
+    @model IndexViewModel;
+}
+
+<div class="container flex-shrink-1 w-100">
+
+    <div class="card py-1 bg-light">
+
+        <div class="card-header">
+            <div class="row">
+                <div class="col-md-10 justify-content-center">
+                    <h4 class="text-muted" style="text-align:center">Каталог фильмов</h4>
+                </div>
+                <div class="col-md-2 justify-content-center">
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                      <form  asp-controller="Film" asp-action="Create" method="get">
+                        <button class="align-self-center btn btn-warning">Добавить</button>
+                      </form>  
+                    }
+                  </div>
+          </div>
+      </div>
+
+    <div class="card-body">
+      <div class="row">
+
+        @if (Model.Films.Count() == 0)
+        {
+            <div class="alert alert-info" style="width:100%">
+                Каталог фильмов пуст
+            </div>
+
+        }
+
+        @foreach (var film in Model.Films)
+        {
+            <div class="col-md-4 d-flex align-items-stretch">
+              <div class="card mb-4 shadow-sm">
+                <div class="card-header justify-content-center">
+                    <h6>@film.Title (@film.Year)</h6>
+                </div>
+                <img src="@film.Poster" class="card-img-top" alt="film_@film.FilmId" height="400">
+                <div class="card-body">
+                  <p class="card-text">Режиссер: @film.Director</p>
+                  <p class="card-text">Страна: @film.Country</p>
+                  <p class="card-text">@film.Description</p>
+                  <div class="d-flex justify-content-between align-items-center">
+                    <div class="btn-group">
+                        @if (User.Identity.IsAuthenticated && film.IsCreator)
+                        {
+                            <form  asp-controller="Film" asp-action="Index" asp-route-id="@film.FilmId" method="get">
+                                <button class="btn btn-sm btn-warning">Подробнее</button>
+                            </form>
+                        }
+                        else
+                        {
+                            <form  asp-controller="Film" asp-action="Index" asp-route-id="@film.FilmId" method="get">
+                                <button class="btn btn-sm btn-info">Подробнее</button>
+                            </form>                
+                        }
+                    </div>
+                    <small class="text-muted">@film.Time.ToString() мин.</small>
+                  </div>
+                </div>
+              </div>
+            </div>
+         }
+      </div>
+    </div>
+
+  </div>
+  @if (Model.PageViewModel.TotalPages > 1)
+    {
+        <div class="card-footer">
+            <div class="row justify-content-center">
+                    @{
+                        if (Model.PageViewModel.TotalPages > 1)
+                        {
+                            <div class="btn-group">
+                                <a class="btn btn-sm btn-outline-primary" asp-controller="Home" asp-action="Index" asp-route-page="1" method="get">Первая</a>
+                                @{
+                                    var buttonsAmount = 5;
+                                    var TotalPagesAmount = Model.PageViewModel.TotalPages;
+                                    var currentPage = Model.PageViewModel.PageNumber;
+                                    if (Model.PageViewModel.TotalPages >= 2 * buttonsAmount + 1)
+                                    {
+                                        var iter = (int)currentPage / buttonsAmount;
+                                        int minPage = currentPage - ((int)buttonsAmount);
+                                        int maxPage = currentPage + ((int)buttonsAmount);
+                                        if (minPage < 0)
+                                        {
+                                            var diff = -minPage;
+                                            minPage = 0;
+                                            maxPage += diff;  
+                                        }
+                                        if (maxPage > TotalPagesAmount)
+                                        {
+                                            var diff = maxPage - TotalPagesAmount;
+                                            maxPage = TotalPagesAmount;
+                                            minPage -= diff;
+                                        }
+                                        @for (int i = minPage + 1; i < maxPage + 1; i++)
+                                        {
+                                            if (i > Model.PageViewModel.TotalPages) break;
+                                            if (i == Model.PageViewModel.PageNumber) 
+                                            {
+                                                <a class="btn btn-sm btn-outline-primary disabled">@(i)</a>
+                                            }
+                                            else 
+                                            {
+                                                <a class="btn btn-sm btn-outline-primary" asp-controller="Home" asp-action="Index" asp-route-page="@i" method="get">@(i)</a>
+                                            }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        @for (int i = 1; i < TotalPagesAmount + 1; i++)
+                                        {
+                                            if (i == Model.PageViewModel.PageNumber) 
+                                            {
+                                                <a class="btn btn-sm btn-outline-primary disabled">@(i)</a>
+                                            }
+                                            else 
+                                            {
+                                                <a class="btn btn-sm btn-outline-primary" asp-controller="Home" asp-action="Index" asp-route-page="@i" method="get">@(i)</a>
+                                            }
+                                        }
+                                    }
+
+                            
+                                }
+                                <a class="btn btn-sm btn-outline-primary" asp-controller="Home" asp-action="Index" asp-route-page="@(Model.PageViewModel.TotalPages)" method="get">Последняя</a>                       
+                             </div>        
+                        }
+                }
+            </div>
+          </div>
+    }

@@ -1,0 +1,89 @@
+﻿@using System.Globalization
+@model FilmsCatalog.Models.CreateFilmViewModel
+@{
+    ViewData["Title"] = "Создать фильм";
+    var Genres = (List<Genre>)ViewData["Genres"];
+    //генерируем список стран
+    List<string> cultureList = new List<string>();
+    CultureInfo[] cultures = CultureInfo.GetCultures(CultureTypes.AllCultures & ~CultureTypes.NeutralCultures);
+    foreach (CultureInfo culture in cultures) { RegionInfo region = new RegionInfo(culture.LCID);
+        if (!(cultureList.Contains(region.EnglishName))) cultureList.Add(region.EnglishName); }
+    cultureList.Sort();
+}
+
+<form asp-action="Create" asp-controller="Film" method="Post" 
+enctype="multipart/form-data">
+    <div class="mb-3">
+        <label asp-for="Title" class="form-label"></label>
+        <input type="text" class="form-control" asp-for="Title">
+        <span class="text-danger" asp-validation-for="Title"></span>
+    </div>
+    <div class="mb-3">
+        <label class="form-label" asp-for="ReleaseYear"></label>
+        <input type="number" class="form-control" asp-for="ReleaseYear">
+        <span class="text-danger" asp-validation-for="ReleaseYear"></span>
+    </div>
+    <div class="mb-3">
+        <label class="form-label" asp-for="Country"></label>
+        @Html.DropDownListFor(x => x.Country, new SelectList(cultureList))
+        <span class="text-danger" asp-validation-for="Country"></span> 
+    </div>
+    <div class="mb-3">
+        <label class="form-label" asp-for="Genres"></label>
+        <input type="hidden" class="form-control chosen-select" asp-for="Genres">
+           @Html.DropDownListFor(x => x.Genres, new MultiSelectList(Genres, "GenreId", "Name"), 
+            new { @id="GenresList", @class = "from-control chosen-select", @multiple = true, style = "width: 100%"})
+        <span class="text-danger" asp-validation-for="Genres"></span>
+    </div>
+    <div class="mb-3">
+        <label class="form-label" asp-for="Slogan"></label>
+        <input class="form-control" type="text" asp-for="Slogan">
+        <span class="text-danger" asp-validation-for="Slogan"></span>
+    </div>
+    <div class="mb-3">
+        <label class="form-label" asp-for="Director"></label>
+        <input class="form-control" type="text" asp-for="Director">
+        <span class="text-danger" asp-validation-for="Director"></span>
+    </div>
+    <div class="mb-3">
+        <label class="form-label" asp-for="Budget"></label>
+        <input type="number" class="form-control" asp-for="Budget">
+        <span class="text-danger" asp-validation-for="Budget"></span>
+    </div>
+    <div class="mb-3">
+        <label class="form-label" asp-for="Fees"></label>
+        <input type="number" class="form-control" asp-for="Fees">
+        <span class="text-danger" asp-validation-for="Fees"></span>
+    </div>
+    <div class="mb-3">
+        <label class="form-label" asp-for="AgeLimit"></label>
+        <input type="number" class="form-control" asp-for="AgeLimit">
+        <span class="text-danger" asp-validation-for="AgeLimit"></span>
+    </div>
+    <div class="mb-3">
+        <label class="form-label" asp-for="Time"></label>
+        <input type="number" class="form-control" asp-for="Time">
+        <span class="text-danger" asp-validation-for="Time"></span>
+    </div>
+    <div class="mb-3">
+        <label class="form-label" asp-for="Description"></label>
+        <textarea class="form-control" asp-for="Description"></textarea>
+        <span class="text-danger" asp-validation-for="Description"></span>
+    </div>
+    <div class="mt-3">
+        <label class="form-label" for="file">Обложка книги</label>
+        <input asp-for="File" type="file" id="file" class="form-control">
+    </div>
+    <div class="text-danger" asp-validation-summary="All"></div>
+    <button type="submit" class="btn btn-primary">Сохранить</button>
+    <a class="btn btn-danger" asp-action="Index" asp-controller="Home" method="get">Отменить</a>
+</form>
+
+@section scripts{
+<script type="text/javascript">
+        $(document).ready(function () {
+            $("select").chosen({max_selected_options: 5});
+            $("select").bind("chosen:maxselected", function () { alert("You reached out limit of genres' number") }); 
+       });
+ </script>
+}
